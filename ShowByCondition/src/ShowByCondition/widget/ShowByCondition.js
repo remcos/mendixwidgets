@@ -33,8 +33,10 @@ define([
 		returnValue: "",
 		checktype: "microflow",
 		referenceEntity: "",
+		applyto: "parent",
 
 		_referenceName: "",
+		_targetNode: "",
 
         // dojo.declare.constructor is called to construct the widget instance. Implement to initialize non-primitive properties.
         constructor: function() {
@@ -46,7 +48,14 @@ define([
         // dijit._WidgetBase.postCreate is called after constructing the widget. Implement to do extra setup work.
         postCreate: function() {
             logger.debug(this.id + ".postCreate");
-			this.domNode.parentElement.style.display = "none";
+
+			if (this.applyto === "parent") {
+				this._targetNode = this.domNode.parentElement;
+			} else {
+				this._targetNode = this.domNode.previousSibling;
+			}
+
+			this._targetNode.style.display = "none";
 
 			if (this.referenceEntity) {
 				this._referenceName = this.referenceEntity.split("/")[0];
@@ -55,9 +64,9 @@ define([
 
 		setParentDisplay : function(display) {
 			if (display == this.returnValue){
-				this.domNode.parentElement.style.display = "block";
+				this._targetNode.style.display = "block";
 			} else {
-				this.domNode.parentElement.style.display = "none";
+				this._targetNode.style.display = "none";
 			}
 		},
 

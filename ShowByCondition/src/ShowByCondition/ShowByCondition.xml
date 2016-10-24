@@ -17,6 +17,16 @@
                 <enumerationValue key="reference">Reference</enumerationValue>
             </enumerationValues>
         </property>
+		<property key="applyto" type="enumeration" defaultValue="parent">
+			<caption>Apply To</caption>
+			<category>Data source</category>
+			<description>Defines whether conditional visibility is controlled by existance of a reference or by a boolean microflow.
+			</description>
+			<enumerationValues>
+				<enumerationValue key="parent">Parent Element</enumerationValue>
+				<enumerationValue key="sibling">Previous Sibling</enumerationValue>
+			</enumerationValues>
+		</property>
 		<property key="microflowName" type="microflow" required="false">
 			<caption>Boolean Microflow</caption>
 			<category>Data source</category>
