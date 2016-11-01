@@ -64,7 +64,7 @@ define([
 
 		setParentDisplay : function(display) {
 			if (display == this.returnValue){
-				this._targetNode.style.display = "block";
+				this._targetNode.style.display = "";
 			} else {
 				this._targetNode.style.display = "none";
 			}
@@ -73,9 +73,12 @@ define([
         // mxui.widget._WidgetBase.update is called when context is changed or initialized. Implement to re-render and / or fetch data.
         update: function(obj, callback) {
 			logger.debug(this.id + ".update");
-			this._contextObj = obj;
-			this._resetSubscriptions();
-			this._updateRendering();
+
+			if(obj) {
+				this._contextObj = obj;
+				this._resetSubscriptions();
+				this._updateRendering();
+			}
             callback();
         },
 
