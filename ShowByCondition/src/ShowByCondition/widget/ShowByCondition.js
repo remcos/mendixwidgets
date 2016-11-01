@@ -30,40 +30,61 @@ define([
 
         // Parameters configured in the Modeler.
 		microflowName: "",
-    returnValue: "",
+		returnValue: "",
+		checktype: "microflow",
+		referenceEntity: "",
+		applyto: "parent",
+
+		_referenceName: "",
+		_targetNode: "",
 
         // dojo.declare.constructor is called to construct the widget instance. Implement to initialize non-primitive properties.
         constructor: function() {
             // Uncomment the following line to enable debug messages
-            logger.level(logger.DEBUG);
+            //logger.level(logger.DEBUG);
             logger.debug(this.id + ".constructor");
         },
 
         // dijit._WidgetBase.postCreate is called after constructing the widget. Implement to do extra setup work.
         postCreate: function() {
             logger.debug(this.id + ".postCreate");
-			this.domNode.parentElement.style.display = "none";
+
+			if (this.applyto === "parent") {
+				this._targetNode = this.domNode.parentElement;
+			} else {
+				this._targetNode = this.domNode.previousSibling;
+			}
+
+			this._targetNode.style.display = "none";
+
+			if (this.referenceEntity) {
+				this._referenceName = this.referenceEntity.split("/")[0];
+			}
         },
 
 		setParentDisplay : function(display) {
-			console.log(display);
 			if (display == this.returnValue){
-				this.domNode.parentElement.style.display = "block";
+				this._targetNode.style.display = "";
+			} else {
+				this._targetNode.style.display = "none";
 			}
 		},
 
         // mxui.widget._WidgetBase.update is called when context is changed or initialized. Implement to re-render and / or fetch data.
         update: function(obj, callback) {
 			logger.debug(this.id + ".update");
-			this._contextObj = obj;
-			this._resetSubscriptions();
-			this._updateRendering();
+
+			if(obj) {
+				this._contextObj = obj;
+				this._resetSubscriptions();
+				this._updateRendering();
+			}
             callback();
         },
-		
+
 		// Rerender the interface.
         _updateRendering: function () {
-			if (this.microflowName != '') {
+			if (this.checktype === "microflow" && this.microflowName != '') {
 				mx.data.action({
 					params: {
 						applyto: "selection",
@@ -77,11 +98,19 @@ define([
 						alert(error.description);
 					}
 				}, this);
+			} else if (this.checktype === "reference") {
+				if (this._contextObj.get(this._referenceName)) {
+					this.setParentDisplay(true);
+				} else {
+					this.setParentDisplay(false);
+				}
 			}
         },
         // Reset subscriptions.
         _resetSubscriptions: function () {
             var _objectHandle = null;
+			var _attrHandle = null;
+
             // Release handles on previous object, if any.
             if (this._handles) {
                 this._handles.forEach(function (handle, i) {
@@ -89,7 +118,7 @@ define([
                 });
                 this._handles = [];
             }
-            // When a mendix object exists create subscribtions. 
+            // When a mendix object exists create subscribtions.
             if (this._contextObj) {
                 _objectHandle = this.subscribe({
                     guid: this._contextObj.getGuid(),
@@ -97,7 +126,24 @@ define([
                         this._updateRendering();
                     })
                 });
-                this._handles = [_objectHandle];
+
+				if (this.referenceEntity) {
+					_attrHandle = this.subscribe({
+	                    guid: this._contextObj.getGuid(),
+	                    attr: this._referenceName,
+	                    callback: lang.hitch(this, function (guid, attr, attrValue) {
+	                        this._updateRendering();
+	                    })
+	                });
+
+				}
+
+				if (this.referenceEntity) {
+					this._handles = [_objectHandle, _attrHandle];
+
+				} else {
+					this._handles = [_objectHandle];
+				}
             }
         },
 
