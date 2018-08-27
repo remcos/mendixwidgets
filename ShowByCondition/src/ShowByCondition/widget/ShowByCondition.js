@@ -105,6 +105,18 @@ define([
 							alert(error.description);
 						}
 					}, this);
+				} else if (this.nanoflow) {
+					mx.data.callNanoflow({
+						nanoflow: this.nanoflow,
+						origin: this.mxform,
+						context: this.mxcontext,
+						callback: function (result) {
+							this.setParentDisplay(result)
+						}.bind(this),
+						error: function (error) {
+							console.error(errow.message);
+						}
+					});
 				}
 			}
 
