@@ -11,6 +11,11 @@
   			<description>Select the Microflow that determines whether the element should be shown.</description>
   			<returnType type="Boolean" />
   		</property>
+          <property key="hiddenClass" type="string" required="false" defaultValue="hidden">
+            <caption>Hidden Class</caption>
+            <category>Behaviour</category>
+            <description>if hiding elements by class, this is the class that will be added. You may need to define style rules for this class in your SASS/CSS/</description>
+          </property>
 		<property key="elementClassFalse" type="string" required="false">
           <caption>Element to hide on false</caption>
           <category>Behaviour</category>
