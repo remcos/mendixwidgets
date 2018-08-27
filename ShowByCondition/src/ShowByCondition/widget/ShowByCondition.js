@@ -89,7 +89,7 @@ define([
 		},
 
 		// Rerender the interface.
-		        _updateRendering: function () {
+		_updateRendering: function () {
 			if (this._contextObj) {
 				if (this.microflowName != '') {
 					mx.data.action({
@@ -108,28 +108,28 @@ define([
 				}
 			}
 
-		        },
-		        // Reset subscriptions.
-		        _resetSubscriptions: function () {
-			            var _objectHandle = null;
-			            // Release handles on previous object, if any.
-			            if (this._handles) {
-				                this._handles.forEach(function (handle, i) {
-					                    mx.data.unsubscribe(handle);
-				                });
-				                this._handles = [];
-			            }
-			            // When a mendix object exists create subscribtions. 
-			            if (this._contextObj) {
-				                _objectHandle = this.subscribe({
-					                    guid: this._contextObj.getGuid(),
-					                    callback: lang.hitch(this, function (guid) {
-						                        this._updateRendering();
-					                    })
-				                });
-				                this._handles = [_objectHandle];
-			            }
-		        },
+		},
+		// Reset subscriptions.
+		_resetSubscriptions: function () {
+			var _objectHandle = null;
+			// Release handles on previous object, if any.
+			if (this._handles) {
+				this._handles.forEach(function (handle, i) {
+					mx.data.unsubscribe(handle);
+				});
+				this._handles = [];
+			}
+			// When a mendix object exists create subscribtions. 
+			if (this._contextObj) {
+				_objectHandle = this.subscribe({
+					guid: this._contextObj.getGuid(),
+					callback: lang.hitch(this, function (guid) {
+						this._updateRendering();
+					})
+				});
+				this._handles = [_objectHandle];
+			}
+		},
 
 		// mxui.widget._WidgetBase.uninitialize is called when the widget is destroyed. Implement to do special tear-down work.
 		uninitialize: function () {
